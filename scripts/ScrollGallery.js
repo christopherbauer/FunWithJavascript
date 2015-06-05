@@ -5,7 +5,8 @@
 		var defaults = { 
 			PageSize: 3, 
 			Page: 0,
-			RankAttribute: "sg-rank",
+			Prefix: "sg",
+			MaintainScrollPosition: false,
 			Selectors : { 
 				Gallery: null, 
 				Next :  null, 
@@ -21,14 +22,14 @@
 		
 		options = $.extend(defaults, options);
 		
-		var rankAttribute = "data-"+ options.RankAttribute;
+		var Prefix = "data-"+ options.Prefix;
 		
 		var itemCount;
 		
 		function rankElements() {
 			var $elements = $(options.Selectors.Gallery).find("*");
 			$elements.each(function (i, element) {
-				$(element).attr(rankAttribute,i);
+				$(element).attr(Prefix+"-rank"	,i);
 			});
 		}		
 	
@@ -41,7 +42,7 @@
 		}
 	
 		function refreshItemCount() {
-			itemCount = $(options.Selectors.Gallery).find("["+rankAttribute+"]").length;
+			itemCount = $(options.Selectors.Gallery).find("["+Prefix+"-rank]").length;
 		}
 		
 		function hasNextPage() {
@@ -58,7 +59,7 @@
 		}
 		
 		function scrollTo() {
-			var $scrollElement = $(options.Selectors.Gallery).find("[" + rankAttribute+"='"+[options.Page * options.PageSize]+"']");
+			var $scrollElement = $(options.Selectors.Gallery).find("[" + Prefix+"-rank='"+[options.Page * options.PageSize]+"']");
 			
 			var layout = ($scrollElement.outerWidth(true)-$scrollElement.innerWidth()) / 2;
 				
@@ -122,6 +123,11 @@
 		}
 		
 		function initialize() {
+			if(!options.MaintainScrollPosition) {
+				$(document).ready(function() {
+					$(options.Selectors.Gallery).scrollLeft(0);
+				});
+			}
 			$(options.Selectors.Gallery).on("page-changed", onPageChanged);
 			$(options.Selectors.Next).on("click", onNextPage);
 			$(options.Selectors.Previous).on("click", onPreviousPage);
@@ -130,12 +136,12 @@
 			makeElementsClassy();
 			refreshItemCount();	
 			
+			checkButtons();
 			if($(options.Selectors.Indicators).length) {
 				createIndicators();
+				checkIndicators();
 			}
 
-			checkButtons();
-			checkIndicators();
 		}
 		
 		initialize();
