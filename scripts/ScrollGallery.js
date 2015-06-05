@@ -1,8 +1,7 @@
 (function() {
 	"use strict";
-	console.log("Loaded TapGallery");
 	
-	var TapGallery = function(options) {
+	var ScrollGallery = function(options) {
 	var defaults = { 
 			PageSize: 3, 
 			Page: 0, 
@@ -63,5 +62,5 @@
 		}
 	};
 	
-	window.TapGallery = TapGallery;
+	window.ScrollGallery = ScrollGallery;
 })();
