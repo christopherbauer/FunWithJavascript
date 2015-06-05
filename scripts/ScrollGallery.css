@@ -4,32 +4,50 @@
 	white-space: nowrap;
 }
 
-.scroll-gallery .scroll-gallery-element {
-	display: inline-block;
-}
-ul > li > span {
-	display: none;
-}
-ul[show-page-number] > li > span {
-	display: inline;
-}
+	.scroll-gallery .scroll-gallery-element {
+		display: inline-block;
+	}
+
 ul {
 	margin: 0;
 	padding: 0;
 	list-style-type: none;
 	text-align: center;	
 }
-ul > li {
-	display: inline-block;
-	margin: 10px 20px 10px 20px;
-	width: 1em;
-	height: 1em;
-	line-height: 1em;
-	border: 1px solid black;
+
+	ul[rounded] > li {
+		border-radius: 15px;
+	}
+	
+	ul > li {
+		display: inline-block;
+		margin: 10px 20px 10px 20px;
+		width: 1em;
+		height: 1em;
+		line-height: 1em;
+		border: 1px solid black;
+	}
+
+		ul > li[current-page] {
+			background-color: green;
+		}
+		
+		ul > li > span {
+			display: none;
+		}
+		
+		ul[show-page-number] > li > span {
+			display: inline;
+		}
+		
+
+.side {
+	position: relative;
+	vertical-align: top;
 }
-ul[rounded] > li {
-	border-radius: 15px;
-}
-ul > li[current-page] {
-	background-color: green;
-}
+
+	.side input[type="button"] {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+	}
