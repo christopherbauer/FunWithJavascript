@@ -5,7 +5,7 @@
 		var defaults = { 
 			PageSize: 3, 
 			Page: 0,
-			RankAttribute: "scr-rank",
+			RankAttribute: "sg-rank",
 			Selectors : { 
 				Gallery: null, 
 				Next :  null, 
@@ -35,21 +35,37 @@
 		
 		refreshItemCount();	
 		
+		function hasNextPage() {
+			return (options.Page+1)*options.PageSize < itemCount;
+		}
+		
 		$(options.Selectors.Next).on("click",function() {
-			if((options.Page+1)*options.PageSize < itemCount){
+			if (hasNextPage()) {
 				options.Page++;
-			}
-			
-			scrollTo();
+				scrollTo();
+			}	
+			checkButtons();
 		});
 		
+		function hasPreviousPage() {
+			return options.Page > 0;
+		}
+		
 		$(options.Selectors.Previous).on("click",function() {
-			if(options.Page > 0) {
+			if(hasPreviousPage()) {
 				options.Page--;
+				scrollTo();
 			}
-			
-			scrollTo();
+			checkButtons();
 		});
+		
+		function checkButtons() {
+			$(options.Selectors.Next).prop("disabled", !hasNextPage());
+			$(options.Selectors.Previous).prop("disabled", !hasPreviousPage());
+		}
+		
+		checkButtons();
+		
 		function scrollTo() {
 			var $scrollElement = $(options.Selectors.Gallery).find("[" + rankAttribute+"='"+[options.Page * options.PageSize]+"']");
 			
