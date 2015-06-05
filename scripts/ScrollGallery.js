@@ -2,24 +2,27 @@
 	"use strict";
 	
 	var ScrollGallery = function(options) {
-	var defaults = { 
+		var defaults = { 
 			PageSize: 3, 
-			Page: 0, 
+			Page: 0,
+			RankAttribute: "scr-rank",
 			Selectors : { 
 				Gallery: null, 
 				Next :  null, 
 				Previous: null
-			} 
+			}
 		};
 		
 		options = $.extend(defaults, options);
+		
+		var rankAttribute = "data-"+ options.RankAttribute;
 		
 		var itemCount;
 		
 		function rankElements() {
 			var $elements = $(options.Selectors.Gallery).find("*");
 			$elements.each(function (i, element) {
-				$(element).attr("data-rank",i);
+				$(element).attr(rankAttribute,i);
 				
 			});
 		}
@@ -27,7 +30,7 @@
 		rankElements();
 		
 		function refreshItemCount() {
-			itemCount = $(options.Selectors.Gallery).find("[data-rank]").length;
+			itemCount = $(options.Selectors.Gallery).find("["+rankAttribute+"]").length;
 		}
 		
 		refreshItemCount();	
@@ -48,8 +51,8 @@
 			scrollTo();
 		});
 		function scrollTo() {
-			var $scrollElement = $(options.Selectors.Gallery).find("[data-rank='"+[options.Page * options.PageSize]+"']");
-			console.log($scrollElement);
+			var $scrollElement = $(options.Selectors.Gallery).find("[" + rankAttribute+"='"+[options.Page * options.PageSize]+"']");
+			
 			var layout = ($scrollElement.outerWidth(true)-$scrollElement.innerWidth()) / 2;
 				
 			var pageAdjustment = options.Page > 0 ? layout : 0;
@@ -62,5 +65,5 @@
 		}
 	};
 	
-	window.ScrollGallery = ScrollGallery;
+	window.ScrollGallery = window.ScrollGallery || ScrollGallery;
 })();
