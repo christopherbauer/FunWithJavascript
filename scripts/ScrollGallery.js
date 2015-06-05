@@ -14,7 +14,8 @@
 			},
 			IndicatorOptions: {
 				Rounded: true,
-				ShowPageNumber: false
+				ShowPageNumber: false,
+				ClickToJump: true
 			}
 		};
 		
@@ -82,7 +83,14 @@
 			for(var i = 0; i<Math.ceil(itemCount/options.PageSize); i++) {
 				ul.append("<li data-page-number="+(i+1)+"><span>"+i+"</span></li>");
 			}
+			
 			container.append(ul);
+			
+			$(options.Selectors.Indicators).find("[data-page-number]").on("click", function () {
+				$(options.Selectors.Gallery).trigger("page-changed", {
+					Page: parseInt($(this).data("page-number"))-1
+				});
+			});
 		}
 		
 		function checkIndicators () {
