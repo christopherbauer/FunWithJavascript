@@ -1,0 +1,54 @@
+<html>
+	<head>
+		<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+		
+		<style type="text/css">
+			* {
+				font-size: 30px;
+			}
+			.side {
+				display: inline-block;
+				width: 5em;
+				height: 15em;
+			}
+			#fixed {
+				display: inline-block;
+				
+				overflow: hidden;
+				white-space: nowrap;
+				
+				height: 15em;
+				width: 25em;
+				
+				margin: 0;
+				padding: 0;
+				
+				border: solid .05em black;
+			}
+			#fixed div {
+				display: inline-block;
+				
+				height: 13em;
+				width: 6em;
+				
+				margin: 1em;
+				padding: 0;
+				
+				border: solid .15em red;
+				
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<section class="side"></section>
+		<section id="fixed">
+		</section>
+		<section class="side"></section>
+		<div>
+			<input id="previous" type="button" value="previous" />
+			<input id="next" type="button" value="next" />
+		</div>
+	</body>
+	<script src="scripts/TapScrollGallery.js"></script>
+</html>
