@@ -85,29 +85,49 @@
 			container.append(ul);
 		}
 		
+		function checkIndicators () {
+			$(options.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
+			$(options.Selectors.Indicators).find("[data-page-number="+(options.Page+1)+"]").attr("current-page", '');
+		}
+		
+		function onPageChanged(event, data) {
+			options.Page = data.Page;
+			scrollTo();
+			checkButtons();
+			checkIndicators();
+		}
+		
+		function onNextPage() {
+			if (hasNextPage()) {
+				$(options.Selectors.Gallery).trigger("page-changed", {
+					Page: options.Page + 1
+				});
+			}
+		}
+		
+		function onPreviousPage() {
+			if (hasPreviousPage()) {
+				$(options.Selectors.Gallery).trigger("page-changed", {
+					Page: options.Page - 1
+				});
+			}
+		}
+		
 		function initialize() {
-			$(options.Selectors.Next).on("click",function() {
-				if (hasNextPage()) {
-					options.Page++;
-					scrollTo();
-				}	
-				checkButtons();
-			});
-			$(options.Selectors.Previous).on("click",function() {
-				if(hasPreviousPage()) {
-					options.Page--;
-					scrollTo();
-				}
-				checkButtons();
-			});
+			$(options.Selectors.Gallery).on("page-changed", onPageChanged);
+			$(options.Selectors.Next).on("click", onNextPage);
+			$(options.Selectors.Previous).on("click", onPreviousPage);
+			
 			rankElements();
 			makeElementsClassy();
 			refreshItemCount();	
-			checkButtons();
 			
 			if($(options.Selectors.Indicators).length) {
 				createIndicators();
 			}
+
+			checkButtons();
+			checkIndicators();
 		}
 		
 		initialize();

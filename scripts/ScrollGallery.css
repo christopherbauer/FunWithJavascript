@@ -30,3 +30,6 @@ ul > li {
 ul[rounded] > li {
 	border-radius: 15px;
 }
+ul > li[current-page] {
+	background-color: green;
+}
