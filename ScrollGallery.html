@@ -10,7 +10,12 @@
 				width: 5em;
 				height: 15em;
 			}
-			
+			#gallery-layout {
+				display: inline-block;
+				width: 25em;
+				margin: 0;
+				padding: 0;
+			}
 			#gallery {
 				height: 15em;
 				width: 25em;
@@ -35,30 +40,32 @@
 	</head>
 	<body>
 		<section class="side"></section>
-		
-		<section id="gallery">
-			<div>1</div>
-			<div>2</div>
-			<div>3</div>
-			<div>4</div>
-			<div>5</div>
-			<div>6</div>
-			<div>7</div>
-			<div>8</div>
-			<div>9</div>
-			<div>10</div>
-			<div>11</div>
-			<div>12</div>
-			<div>13</div>
-			<div>14</div>
-			<div>15</div>
-			<div>16</div>
-			<div>17</div>
-			<div>18</div>
-			<div>19</div>
-			<div>20</div>
+		<section id="gallery-layout">
+			<section id="gallery">
+				<div>1</div>
+				<div>2</div>
+				<div>3</div>
+				<div>4</div>
+				<div>5</div>
+				<div>6</div>
+				<div>7</div>
+				<div>8</div>
+				<div>9</div>
+				<div>10</div>
+				<div>11</div>
+				<div>12</div>
+				<div>13</div>
+				<div>14</div>
+				<div>15</div>
+				<div>16</div>
+				<div>17</div>
+				<div>18</div>
+				<div>19</div>
+				<div>20</div>
+			</section>
+			<section class="indicators">
+			</section>
 		</section>
-		
 		<section class="side"></section>
 		<div>
 			<input id="previous" type="button" value="previous" />
@@ -69,7 +76,7 @@
 	<script src="scripts/ScrollGallery.js"></script>
 	<script>
 		$(document).ready(function() {
-			var gallery = new ScrollGallery({ Selectors: { Gallery: "#gallery", Next: "#next", Previous: "#previous" }});
+			var gallery = new ScrollGallery({ Selectors: { Gallery: "#gallery", Next: "#next", Previous: "#previous", Indicators: ".indicators" }});
 		});
 	</script>
 </html>

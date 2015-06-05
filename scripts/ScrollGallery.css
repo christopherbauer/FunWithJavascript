@@ -7,3 +7,26 @@
 .scroll-gallery .scroll-gallery-element {
 	display: inline-block;
 }
+ul > li > span {
+	display: none;
+}
+ul[show-page-number] > li > span {
+	display: inline;
+}
+ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	text-align: center;	
+}
+ul > li {
+	display: inline-block;
+	margin: 10px 20px 10px 20px;
+	width: 1em;
+	height: 1em;
+	line-height: 1em;
+	border: 1px solid black;
+}
+ul[rounded] > li {
+	border-radius: 15px;
+}

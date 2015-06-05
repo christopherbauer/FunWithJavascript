@@ -9,7 +9,12 @@
 			Selectors : { 
 				Gallery: null, 
 				Next :  null, 
-				Previous: null
+				Previous: null,
+				Indicators: null
+			},
+			IndicatorOptions: {
+				Rounded: true,
+				ShowPageNumber: false
 			}
 		};
 		
@@ -24,9 +29,7 @@
 			$elements.each(function (i, element) {
 				$(element).attr(rankAttribute,i);
 			});
-		}
-		
-		rankElements();
+		}		
 	
 		function makeElementsClassy() {
 			$(options.Selectors.Gallery).addClass("scroll-gallery");
@@ -35,44 +38,23 @@
 				$(element).addClass("scroll-gallery-element");
 			});
 		}
-		makeElementsClassy();
 	
 		function refreshItemCount() {
 			itemCount = $(options.Selectors.Gallery).find("["+rankAttribute+"]").length;
 		}
 		
-		refreshItemCount();	
-		
 		function hasNextPage() {
 			return (options.Page+1)*options.PageSize < itemCount;
 		}
-		
-		$(options.Selectors.Next).on("click",function() {
-			if (hasNextPage()) {
-				options.Page++;
-				scrollTo();
-			}	
-			checkButtons();
-		});
 		
 		function hasPreviousPage() {
 			return options.Page > 0;
 		}
 		
-		$(options.Selectors.Previous).on("click",function() {
-			if(hasPreviousPage()) {
-				options.Page--;
-				scrollTo();
-			}
-			checkButtons();
-		});
-		
 		function checkButtons() {
 			$(options.Selectors.Next).prop("disabled", !hasNextPage());
 			$(options.Selectors.Previous).prop("disabled", !hasPreviousPage());
 		}
-		
-		checkButtons();
 		
 		function scrollTo() {
 			var $scrollElement = $(options.Selectors.Gallery).find("[" + rankAttribute+"='"+[options.Page * options.PageSize]+"']");
@@ -87,6 +69,48 @@
 			
 			$(options.Selectors.Gallery).stop().animate({ scrollLeft: elementScrollLeft }, 1000);
 		}
+		
+		function createIndicators() {			
+			var container = $(options.Selectors.Indicators);
+			var ul = $("<ul></ul>");
+			if(options.IndicatorOptions.ShowPageNumber) {
+				ul.attr("show-page-number",'');
+			}
+			if(options.IndicatorOptions.Rounded) {
+				ul.attr("rounded", '');
+			}
+			for(var i = 0; i<Math.ceil(itemCount/options.PageSize); i++) {
+				ul.append("<li data-page-number="+(i+1)+"><span>"+i+"</span></li>");
+			}
+			container.append(ul);
+		}
+		
+		function initialize() {
+			$(options.Selectors.Next).on("click",function() {
+				if (hasNextPage()) {
+					options.Page++;
+					scrollTo();
+				}	
+				checkButtons();
+			});
+			$(options.Selectors.Previous).on("click",function() {
+				if(hasPreviousPage()) {
+					options.Page--;
+					scrollTo();
+				}
+				checkButtons();
+			});
+			rankElements();
+			makeElementsClassy();
+			refreshItemCount();	
+			checkButtons();
+			
+			if($(options.Selectors.Indicators).length) {
+				createIndicators();
+			}
+		}
+		
+		initialize();
 	};
 	
 	window.ScrollGallery = window.ScrollGallery || ScrollGallery;
