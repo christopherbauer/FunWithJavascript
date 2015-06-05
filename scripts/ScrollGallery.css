@@ -1,0 +1,9 @@
+.scroll-gallery {
+	display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.scroll-gallery .scroll-gallery-element {
+	display: inline-block;
+}

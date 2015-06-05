@@ -23,12 +23,20 @@
 			var $elements = $(options.Selectors.Gallery).find("*");
 			$elements.each(function (i, element) {
 				$(element).attr(rankAttribute,i);
-				
 			});
 		}
 		
 		rankElements();
-		
+	
+		function makeElementsClassy() {
+			$(options.Selectors.Gallery).addClass("scroll-gallery");
+			var $elements = $(options.Selectors.Gallery).find("*");
+			$elements.each(function (i, element) {
+				$(element).addClass("scroll-gallery-element");
+			});
+		}
+		makeElementsClassy();
+	
 		function refreshItemCount() {
 			itemCount = $(options.Selectors.Gallery).find("["+rankAttribute+"]").length;
 		}

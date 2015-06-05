@@ -1,6 +1,6 @@
 <html>
 	<head>
-		
+		<link rel="stylesheet" type="text/css" href="scripts/ScrollGallery.css"/>
 		<style type="text/css">
 			* {
 				font-size: 30px;
@@ -10,12 +10,8 @@
 				width: 5em;
 				height: 15em;
 			}
-			#fixed {
-				display: inline-block;
-				
-				overflow: hidden;
-				white-space: nowrap;
-				
+			
+			#gallery {
 				height: 15em;
 				width: 25em;
 				
@@ -24,9 +20,7 @@
 				
 				border: solid .05em black;
 			}
-			#fixed div {
-				display: inline-block;
-				
+			#gallery div {
 				height: 13em;
 				width: 6em;
 				
@@ -41,7 +35,8 @@
 	</head>
 	<body>
 		<section class="side"></section>
-		<section id="fixed">
+		
+		<section id="gallery">
 			<div>1</div>
 			<div>2</div>
 			<div>3</div>
@@ -63,6 +58,7 @@
 			<div>19</div>
 			<div>20</div>
 		</section>
+		
 		<section class="side"></section>
 		<div>
 			<input id="previous" type="button" value="previous" />
@@ -73,7 +69,7 @@
 	<script src="scripts/ScrollGallery.js"></script>
 	<script>
 		$(document).ready(function() {
-			var gallery = new ScrollGallery({ Selectors: { Gallery: "#fixed", Next: "#next", Previous: "#previous" }});
+			var gallery = new ScrollGallery({ Selectors: { Gallery: "#gallery", Next: "#next", Previous: "#previous" }});
 		});
 	</script>
 </html>
