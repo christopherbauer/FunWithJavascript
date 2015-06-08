@@ -4,7 +4,7 @@
     var ScrollGallery = function (options) {
         var defaults = {
             PageSize: 3,
-            Page: 0,
+            PageIndex: 0,
             Prefix: "sg",
             MaintainScrollPosition: false,
             Easing: "",
@@ -20,7 +20,8 @@
             IndicatorOptions: {
                 Rounded: true,
                 ShowPageNumber: false,
-                ClickToJump: true
+                ClickToJump: true,
+                IncreaseTouchSurface: true
             }
         };
 
@@ -50,11 +51,11 @@
         }
 
         function hasNextPage() {
-            return (options.Page + 1) * options.PageSize < itemCount;
+            return (options.PageIndex + 1) * options.PageSize < itemCount;
         }
 
         function hasPreviousPage() {
-            return options.Page > 0;
+            return options.PageIndex > 0;
         }
 
         function checkButtons() {
@@ -63,11 +64,11 @@
         }
 
         function getScrollPosition() {
-            var $scrollElement = $(options.Selectors.Gallery).find("[" + Prefix + "-rank='" + [options.Page * options.PageSize] + "']");
+            var $scrollElement = $(options.Selectors.Gallery).find("[" + Prefix + "-rank='" + [options.PageIndex * options.PageSize] + "']");
 
             var layout = ($scrollElement.outerWidth(true) - $scrollElement.innerWidth()) / 2;
 
-            var pageAdjustment = options.Page > 0 ? layout : 0;
+            var pageAdjustment = options.PageIndex > 0 ? layout : 0;
 
             var $parent = $scrollElement.parent();
 
@@ -84,34 +85,42 @@
 
         function createIndicators() {
             var $container = $(options.Selectors.Indicators);
-            var $ul = $("<ul></ul>");
-            if (options.IndicatorOptions.ShowPageNumber) {
-                $ul.attr("show-page-number", '');
+
+            if (options.IndicatorOptions.IncreaseTouchSurface) {
+                $container.addClass("widen");
             }
+            
+            var $ul = $("<ul></ul>");
+            
             if (options.IndicatorOptions.Rounded) {
                 $ul.attr("rounded", '');
             }
+
             for (var i = 0; i < getTotalPages() ; i++) {
-                $ul.append("<li data-page-number=" + (i + 1) + "><span>" + i + "</span></li>");
+                var $touchSurface = $("<li data-page-number=\"" + (i + 1) + "\"></li>");
+
+                $touchSurface.append($("<button value=\"" + (options.IndicatorOptions.ShowPageNumber ? (i + 1) : "") + "\" />"));
+
+                $ul.append($touchSurface);
             }
 
             $container.append($ul);
 
             $(options.Selectors.Indicators).find("[data-page-number]").on("click", function () {
                 $(options.Selectors.Gallery).trigger("page-changed", {
-                    Page: parseInt($(this).data("page-number")) - 1
+                    PageIndex: parseInt($(this).data("page-number")) - 1
                 });
             });
         }
 
         function checkIndicators() {
             $(options.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
-            $(options.Selectors.Indicators).find("[data-page-number=" + (options.Page + 1) + "]").attr("current-page", '');
+            $(options.Selectors.Indicators).find("[data-page-number=" + (options.PageIndex + 1) + "]").attr("current-page", '');
         }
 
         function checkPageIndex() {
             if ($(options.Selectors.PageCurrent).length) {
-                $(options.Selectors.PageCurrent).text(options.Page + 1);
+                $(options.Selectors.PageCurrent).text(options.PageIndex + 1);
             }
             if ($(options.Selectors.PageTotal).length) {
                 $(options.Selectors.PageTotal).text(getTotalPages());
@@ -119,7 +128,7 @@
         }
 
         function onPageChanged(event, data) {
-            options.Page = data.Page;
+            options.PageIndex = data.PageIndex;
             scrollTo();
             checkButtons();
             checkIndicators();
@@ -129,7 +138,7 @@
         function onNextPage() {
             if (hasNextPage()) {
                 $(options.Selectors.Gallery).trigger("page-changed", {
-                    Page: options.Page + 1
+                    PageIndex: options.PageIndex + 1
                 });
             }
         }
@@ -137,7 +146,7 @@
         function onPreviousPage() {
             if (hasPreviousPage()) {
                 $(options.Selectors.Gallery).trigger("page-changed", {
-                    Page: options.Page - 1
+                    PageIndex: options.PageIndex - 1
                 });
             }
         }
