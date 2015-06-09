@@ -1,43 +1,44 @@
 (function () {
     "use strict";
 
-    var ScrollGallery = function (options) {
-        var defaults = {
-            PageSize: 3,
-            PageIndex: 0,
-            Prefix: "sg", /* TODO: Actually use the prefix */
-            MaintainScrollPosition: false,
-            Easing: "",
-            Speed: 1000,
-            Selectors: {
-                Gallery: null,
-                Next: null,
-                Previous: null,
-                Indicators: null,
-                PageTotal: null,
-                PageCurrent: null
-            },
-            IndicatorOptions: {
-                Rounded: true,
-                ShowPageNumber: false,
-                ClickToJump: true,
-                IncreaseTouchSurface: true
-            }
-        };
+    var defaults = {
+        PageSize: 3,
+        PageIndex: 0,
+        Prefix: "sg", /* TODO: Actually use the prefix */
+        MaintainScrollPosition: false,
+        Easing: "",
+        Speed: 1000,
+        Selectors: {
+            Gallery: null,
+            Next: null,
+            Previous: null,
+            Indicators: null,
+            PageTotal: null,
+            PageCurrent: null
+        },
+        IndicatorOptions: {
+            Rounded: true,
+            ShowPageNumber: false,
+            ClickToJump: true,
+            IncreaseTouchSurface: true
+        }
+    };
 
-        var statics = {
-            Classes: {
-                Gallery: "scroll-gallery",
-                GalleryElement: "scroll-gallery-element",
-                WideTouchable: "widen"
-            },
-            Attributes: {
-                Rounded: "data-rounded",
-                PageNumber: "data-page-number",
-                Rank: "data-rank"
-            },
-            ItemCount: 0
-        };
+    var statics = {
+        Classes: {
+            Gallery: "scroll-gallery",
+            GalleryElement: "scroll-gallery-element",
+            WideTouchable: "widen"
+        },
+        Attributes: {
+            Rounded: "data-rounded",
+            PageNumber: "data-page-number",
+            Rank: "data-rank"
+        },
+        ItemCount: 0
+    };
+
+    var ScrollGallery = function (options) {
 
         var config = $.extend(defaults, options, statics);
 
