@@ -5,7 +5,7 @@
         var defaults = {
             PageSize: 3,
             PageIndex: 0,
-            Prefix: "sg",
+            Prefix: "sg", /* TODO: Actually use the prefix */
             MaintainScrollPosition: false,
             Easing: "",
             Speed: 1000,
@@ -30,12 +30,15 @@
                 Gallery: "scroll-gallery",
                 GalleryElement: "scroll-gallery-element",
                 WideTouchable: "widen"
-    }
+            },
+            Attributes: {
+                Rounded: "data-rounded",
+                PageNumber: "data-page-number",
+                Rank: "data-rank"
+            }
         };
 
         var config = $.extend(defaults, options, statics);
-
-        var Prefix = "data-" + config.Prefix;
 
         var itemCount;
 
@@ -44,7 +47,7 @@
 
             var $elements = $(config.Selectors.Gallery).find("> *");
             $elements.each(function (i, element) {
-                $(element).attr(Prefix + "-rank", i);
+                $(element).attr(config.Attributes.Rank, i);
                 $(element).addClass(config.Classes.GalleryElement);
             });
         }
@@ -59,12 +62,12 @@
             var $ul = $("<ul></ul>");
 
             if (config.IndicatorOptions.Rounded) {
-                $ul.attr("data-rounded", "true");
+                $ul.attr(config.Attributes.Rounded, "true");
             }
 
             for (var i = 0; i < getTotalPages() ; i++) {
                 var $li = $("<li></li>");
-                $li.attr("data-page-number", i + 1);
+                $li.attr(config.Attributes.PageNumber, i + 1);
 
                 var $button = $("<button />");
                 $button.val(config.IndicatorOptions.ShowPageNumber ? (i + 1) : "");
@@ -75,9 +78,9 @@
 
             $container.append($ul);
 
-            $(config.Selectors.Indicators).find("[data-page-number]").on("click", function () {
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "]").on("click", function () {
                 $(config.Selectors.Gallery).trigger("page-changed", {
-                    PageIndex: parseInt($(this).data("page-number")) - 1
+                    PageIndex: parseInt($(this).attr(config.Attributes.PageNumber)) - 1
                 });
             });
         }
@@ -88,8 +91,8 @@
         }
 
         function updatePageIndicators() {
-            $(config.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
-            $(config.Selectors.Indicators).find("[data-page-number=" + (config.PageIndex + 1) + "]").attr("current-page", '');
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "]").removeAttr("current-page");
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "=" + (config.PageIndex + 1) + "]").attr("current-page", '');
         }
 
         function updatePageDisplay() {
@@ -102,7 +105,7 @@
         }
 
         function updateItemCount() {
-            itemCount = $(config.Selectors.Gallery).find("[" + Prefix + "-rank]").length;
+            itemCount = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "]").length;
         }
 
         function hasNextPage() {
@@ -115,7 +118,7 @@
 
 
         function getScrollPosition() {
-            var $scrollElement = $(config.Selectors.Gallery).find("[" + Prefix + "-rank='" + [config.PageIndex * config.PageSize] + "']");
+            var $scrollElement = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "='" + [config.PageIndex * config.PageSize] + "']");
 
             var layout = ($scrollElement.outerWidth(true) - $scrollElement.innerWidth()) / 2;
 
