@@ -33,7 +33,8 @@
         Attributes: {
             Rounded: "data-rounded",
             PageNumber: "data-page-number",
-            Rank: "data-rank"
+            Rank: "data-rank",
+            CurrentPage: "current-page"
         },
         ItemCount: 0
     };
@@ -91,8 +92,8 @@
         }
 
         function updatePageIndicators() {
-            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "]").removeAttr("current-page");
-            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "=" + (config.PageIndex + 1) + "]").attr("current-page", '');
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "]").removeAttr(config.Attributes.CurrentPage);
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "=" + (config.PageIndex + 1) + "]").attr(config.Attributes.CurrentPage, true);
         }
 
         function updatePageDisplay() {
