@@ -35,12 +35,11 @@
                 Rounded: "data-rounded",
                 PageNumber: "data-page-number",
                 Rank: "data-rank"
-            }
+            },
+            ItemCount: 0
         };
 
         var config = $.extend(defaults, options, statics);
-
-        var itemCount;
 
         function enhanceElements() {
             $(config.Selectors.Gallery).addClass(config.Classes.Gallery);
@@ -101,11 +100,11 @@
         }
 
         function updateItemCount() {
-            itemCount = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "]").length;
+            config.ItemCount = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "]").length;
         }
 
         function hasNextPage() {
-            return (config.PageIndex + 1) * config.PageSize < itemCount;
+            return (config.PageIndex + 1) * config.PageSize < config.ItemCount;
         }
 
         function hasPreviousPage() {
@@ -130,7 +129,7 @@
         }
 
         function getTotalPages() {
-            return Math.ceil(itemCount / config.PageSize);
+            return Math.ceil(config.ItemCount / config.PageSize);
         }
 
         function onPageChanged(event, data) {
