@@ -96,12 +96,8 @@
         }
 
         function updatePageDisplay() {
-            if ($(config.Selectors.PageCurrent).length) {
-                $(config.Selectors.PageCurrent).text(config.PageIndex + 1);
-            }
-            if ($(config.Selectors.PageTotal).length) {
-                $(config.Selectors.PageTotal).text(getTotalPages());
-            }
+            $(config.Selectors.PageCurrent).text(config.PageIndex + 1);
+            $(config.Selectors.PageTotal).text(getTotalPages());
         }
 
         function updateItemCount() {
@@ -161,7 +157,19 @@
             }
         }
 
+        function validate() {
+            if (!$(config.Selectors.Gallery).length) {
+                throw "Missing Selector: Gallery";
+            }
+
+            if (!$(config.Selectors.Indicators).length && (!$(config.Selectors.Previous) || !$(config.Selectors.Next))) {
+                throw "Missing Selector: Indicators or Previous/Next";
+            }
+        }
+
         function initialize() {
+            validate();
+
             $(config.Selectors.Gallery).on("page-changed", onPageChanged);
             $(config.Selectors.Next).on("click", onNextPage);
             $(config.Selectors.Previous).on("click", onPreviousPage);
