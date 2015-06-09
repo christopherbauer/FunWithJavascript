@@ -15,7 +15,7 @@ ul {
 	text-align: center;	
 }
 
-	ul[rounded] > li {
+	ul[data-rounded] > li {
 		border-radius: 15px;
 	}
 	

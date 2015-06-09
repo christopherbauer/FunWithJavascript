@@ -31,22 +31,69 @@
 
         var itemCount;
 
-        function rankElements() {
+        function enhanceElements() {
+            $(options.Selectors.Gallery).addClass("scroll-gallery");
+
             var $elements = $(options.Selectors.Gallery).find("> *");
             $elements.each(function (i, element) {
                 $(element).attr(Prefix + "-rank", i);
-            });
-        }
-
-        function makeElementsClassy() {
-            $(options.Selectors.Gallery).addClass("scroll-gallery");
-            var $elements = $(options.Selectors.Gallery).find("> *");
-            $elements.each(function (i, element) {
                 $(element).addClass("scroll-gallery-element");
             });
         }
 
-        function refreshItemCount() {
+        function createPageIndicators() {
+            var $container = $(options.Selectors.Indicators);
+
+            if (options.IndicatorOptions.IncreaseTouchSurface) {
+                $container.addClass("widen");
+            }
+
+            var $ul = $("<ul></ul>");
+
+            if (options.IndicatorOptions.Rounded) {
+                $ul.attr("data-rounded", "true");
+            }
+
+            for (var i = 0; i < getTotalPages() ; i++) {
+                var $li = $("<li></li>");
+                $li.attr("data-page-number", i + 1);
+
+                var $button = $("<button />");
+                $button.val(options.IndicatorOptions.ShowPageNumber ? (i + 1) : "");
+                $li.append($button);
+
+                $ul.append($li);
+            }
+
+            $container.append($ul);
+
+            $(options.Selectors.Indicators).find("[data-page-number]").on("click", function () {
+                $(options.Selectors.Gallery).trigger("page-changed", {
+                    PageIndex: parseInt($(this).data("page-number")) - 1
+                });
+            });
+        }
+
+        function updatePageButtons() {
+            $(options.Selectors.Next).prop("disabled", !hasNextPage());
+            $(options.Selectors.Previous).prop("disabled", !hasPreviousPage());
+        }
+
+        function updatePageIndicators() {
+            $(options.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
+            $(options.Selectors.Indicators).find("[data-page-number=" + (options.PageIndex + 1) + "]").attr("current-page", '');
+        }
+
+        function updatePageDisplay() {
+            if ($(options.Selectors.PageCurrent).length) {
+                $(options.Selectors.PageCurrent).text(options.PageIndex + 1);
+            }
+            if ($(options.Selectors.PageTotal).length) {
+                $(options.Selectors.PageTotal).text(getTotalPages());
+            }
+        }
+
+        function updateItemCount() {
             itemCount = $(options.Selectors.Gallery).find("[" + Prefix + "-rank]").length;
         }
 
@@ -58,10 +105,6 @@
             return options.PageIndex > 0;
         }
 
-        function checkButtons() {
-            $(options.Selectors.Next).prop("disabled", !hasNextPage());
-            $(options.Selectors.Previous).prop("disabled", !hasPreviousPage());
-        }
 
         function getScrollPosition() {
             var $scrollElement = $(options.Selectors.Gallery).find("[" + Prefix + "-rank='" + [options.PageIndex * options.PageSize] + "']");
@@ -83,56 +126,12 @@
             return Math.ceil(itemCount / options.PageSize);
         }
 
-        function createIndicators() {
-            var $container = $(options.Selectors.Indicators);
-
-            if (options.IndicatorOptions.IncreaseTouchSurface) {
-                $container.addClass("widen");
-            }
-            
-            var $ul = $("<ul></ul>");
-            
-            if (options.IndicatorOptions.Rounded) {
-                $ul.attr("rounded", '');
-            }
-
-            for (var i = 0; i < getTotalPages() ; i++) {
-                var $touchSurface = $("<li data-page-number=\"" + (i + 1) + "\"></li>");
-
-                $touchSurface.append($("<button value=\"" + (options.IndicatorOptions.ShowPageNumber ? (i + 1) : "") + "\" />"));
-
-                $ul.append($touchSurface);
-            }
-
-            $container.append($ul);
-
-            $(options.Selectors.Indicators).find("[data-page-number]").on("click", function () {
-                $(options.Selectors.Gallery).trigger("page-changed", {
-                    PageIndex: parseInt($(this).data("page-number")) - 1
-                });
-            });
-        }
-
-        function checkIndicators() {
-            $(options.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
-            $(options.Selectors.Indicators).find("[data-page-number=" + (options.PageIndex + 1) + "]").attr("current-page", '');
-        }
-
-        function checkPageIndex() {
-            if ($(options.Selectors.PageCurrent).length) {
-                $(options.Selectors.PageCurrent).text(options.PageIndex + 1);
-            }
-            if ($(options.Selectors.PageTotal).length) {
-                $(options.Selectors.PageTotal).text(getTotalPages());
-            }
-        }
-
         function onPageChanged(event, data) {
             options.PageIndex = data.PageIndex;
             scrollTo();
-            checkButtons();
-            checkIndicators();
-            checkPageIndex();
+            updatePageButtons();
+            updatePageIndicators();
+            updatePageDisplay();
         }
 
         function onNextPage() {
@@ -156,9 +155,8 @@
             $(options.Selectors.Next).on("click", onNextPage);
             $(options.Selectors.Previous).on("click", onPreviousPage);
 
-            rankElements();
-            makeElementsClassy();
-            refreshItemCount();
+            enhanceElements();
+            updateItemCount();
 
             if (!options.MaintainScrollPosition) {
                 $(document).ready(function () {
@@ -169,12 +167,12 @@
                     $(options.Selectors.Gallery).scrollLeft(getScrollPosition());
                 });
             }
-            checkButtons();
+            updatePageButtons();
             if ($(options.Selectors.Indicators).length) {
-                createIndicators();
-                checkIndicators();
+                createPageIndicators();
+                updatePageIndicators();
             }
-            checkPageIndex();
+            updatePageDisplay();
         }
 
         initialize();
