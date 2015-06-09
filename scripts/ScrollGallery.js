@@ -1,74 +1,129 @@
 (function () {
     "use strict";
 
+    var defaults = {
+        PageSize: 3,
+        PageIndex: 0,
+        Prefix: "sg", /* TODO: Actually use the prefix */
+        MaintainScrollPosition: false,
+        Easing: "",
+        Speed: 1000,
+        Selectors: {
+            Gallery: null,
+            Next: null,
+            Previous: null,
+            Indicators: null,
+            PageTotal: null,
+            PageCurrent: null
+        },
+        IndicatorOptions: {
+            Rounded: true,
+            ShowPageNumber: false,
+            ClickToJump: true,
+            IncreaseTouchSurface: true
+        }
+    };
+
+    var statics = {
+        Classes: {
+            Gallery: "scroll-gallery",
+            GalleryElement: "scroll-gallery-element",
+            WideTouchable: "widen"
+        },
+        Attributes: {
+            Rounded: "data-rounded",
+            PageNumber: "data-page-number",
+            Rank: "data-rank",
+            CurrentPage: "current-page"
+        },
+        ItemCount: 0
+    };
+
     var ScrollGallery = function (options) {
-        var defaults = {
-            PageSize: 3,
-            PageIndex: 0,
-            Prefix: "sg",
-            MaintainScrollPosition: false,
-            Easing: "",
-            Speed: 1000,
-            Selectors: {
-                Gallery: null,
-                Next: null,
-                Previous: null,
-                Indicators: null,
-                PageTotal: null,
-                PageCurrent: null
-            },
-            IndicatorOptions: {
-                Rounded: true,
-                ShowPageNumber: false,
-                ClickToJump: true,
-                IncreaseTouchSurface: true
-            }
-        };
 
-        options = $.extend(defaults, options);
-
-        var Prefix = "data-" + options.Prefix;
-
-        var itemCount;
-
-        function rankElements() {
-            var $elements = $(options.Selectors.Gallery).find("> *");
-            $elements.each(function (i, element) {
-                $(element).attr(Prefix + "-rank", i);
-            });
-        }
-
-        function makeElementsClassy() {
-            $(options.Selectors.Gallery).addClass("scroll-gallery");
-            var $elements = $(options.Selectors.Gallery).find("> *");
-            $elements.each(function (i, element) {
-                $(element).addClass("scroll-gallery-element");
-            });
-        }
-
-        function refreshItemCount() {
-            itemCount = $(options.Selectors.Gallery).find("[" + Prefix + "-rank]").length;
-        }
+        var config = $.extend(defaults, options, statics);
 
         function hasNextPage() {
-            return (options.PageIndex + 1) * options.PageSize < itemCount;
+            return (config.PageIndex + 1) * config.PageSize < config.ItemCount;
         }
 
         function hasPreviousPage() {
-            return options.PageIndex > 0;
+            return config.PageIndex > 0;
         }
 
-        function checkButtons() {
-            $(options.Selectors.Next).prop("disabled", !hasNextPage());
-            $(options.Selectors.Previous).prop("disabled", !hasPreviousPage());
+        function getTotalPages() {
+            return Math.ceil(config.ItemCount / config.PageSize);
+        }
+
+        function enhanceElements() {
+            $(config.Selectors.Gallery).addClass(config.Classes.Gallery);
+
+            var $elements = $(config.Selectors.Gallery).find("> *");
+            $elements.each(function (i, element) {
+                $(element).attr(config.Attributes.Rank, i);
+                $(element).addClass(config.Classes.GalleryElement);
+            });
+        }
+
+        function createPageIndicators() {
+            var $container = $(config.Selectors.Indicators);
+
+            if (config.IndicatorOptions.IncreaseTouchSurface) {
+                $container.addClass(config.Classes.WideTouchable);
+            }
+
+            var $ul = $("<ul></ul>");
+
+            if (config.IndicatorOptions.Rounded) {
+                $ul.attr(config.Attributes.Rounded, "true");
+            }
+
+            var totalPages = getTotalPages();
+            for (var i = 0; i < totalPages ; i++) {
+                var $li = $("<li></li>");
+                $li.attr(config.Attributes.PageNumber, i + 1);
+
+                var $button = $("<button />");
+                $button.val(config.IndicatorOptions.ShowPageNumber ? (i + 1) : "");
+                $li.append($button);
+
+                $ul.append($li);
+            }
+
+            $container.append($ul);
+
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "]").on("click", function () {
+                $(config.Selectors.Gallery).trigger("page-changed", {
+                    PageIndex: parseInt($(this).attr(config.Attributes.PageNumber)) - 1
+                });
+            });
+        }
+
+        function updatePageButtons() {
+            $(config.Selectors.Next).prop("disabled", !hasNextPage());
+            $(config.Selectors.Previous).prop("disabled", !hasPreviousPage());
+        }
+
+        function updatePageIndicators() {
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "]").removeAttr(config.Attributes.CurrentPage);
+            $(config.Selectors.Indicators).find("[" + config.Attributes.PageNumber + "=" + (config.PageIndex + 1) + "]").attr(config.Attributes.CurrentPage, true);
+        }
+
+        function updatePageDisplay() {
+            $(config.Selectors.PageCurrent).text(config.PageIndex + 1);
+            $(config.Selectors.PageTotal).text(getTotalPages());
+        }
+
+        function updateItemCount() {
+            config.ItemCount = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "]").length;
         }
 
         function getScrollPosition() {
-            var $scrollElement = $(options.Selectors.Gallery).find("[" + Prefix + "-rank='" + [options.PageIndex * options.PageSize] + "']");
+            var $scrollElement = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "='" + [config.PageIndex * config.PageSize] + "']");
 
             var layout = ($scrollElement.outerWidth(true) - $scrollElement.innerWidth()) / 2;
 
-            var pageAdjustment = options.PageIndex > 0 ? layout : 0;
+            var pageAdjustment = config.PageIndex > 0 ? layout : 0;
 
             var $parent = $scrollElement.parent();
 
@@ -76,69 +131,21 @@
         }
 
         function scrollTo() {
-            $(options.Selectors.Gallery).stop().animate({ scrollLeft: getScrollPosition() }, options.Speed, options.Easing);
-        }
-
-        function getTotalPages() {
-            return Math.ceil(itemCount / options.PageSize);
-        }
-
-        function createIndicators() {
-            var $container = $(options.Selectors.Indicators);
-
-            if (options.IndicatorOptions.IncreaseTouchSurface) {
-                $container.addClass("widen");
-            }
-            
-            var $ul = $("<ul></ul>");
-            
-            if (options.IndicatorOptions.Rounded) {
-                $ul.attr("rounded", '');
-            }
-
-            for (var i = 0; i < getTotalPages() ; i++) {
-                var $touchSurface = $("<li data-page-number=\"" + (i + 1) + "\"></li>");
-
-                $touchSurface.append($("<button value=\"" + (options.IndicatorOptions.ShowPageNumber ? (i + 1) : "") + "\" />"));
-
-                $ul.append($touchSurface);
-            }
-
-            $container.append($ul);
-
-            $(options.Selectors.Indicators).find("[data-page-number]").on("click", function () {
-                $(options.Selectors.Gallery).trigger("page-changed", {
-                    PageIndex: parseInt($(this).data("page-number")) - 1
-                });
-            });
-        }
-
-        function checkIndicators() {
-            $(options.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
-            $(options.Selectors.Indicators).find("[data-page-number=" + (options.PageIndex + 1) + "]").attr("current-page", '');
-        }
-
-        function checkPageIndex() {
-            if ($(options.Selectors.PageCurrent).length) {
-                $(options.Selectors.PageCurrent).text(options.PageIndex + 1);
-            }
-            if ($(options.Selectors.PageTotal).length) {
-                $(options.Selectors.PageTotal).text(getTotalPages());
-            }
+            $(config.Selectors.Gallery).stop().animate({ scrollLeft: getScrollPosition() }, config.Speed, config.Easing);
         }
 
         function onPageChanged(event, data) {
-            options.PageIndex = data.PageIndex;
+            config.PageIndex = data.PageIndex;
             scrollTo();
-            checkButtons();
-            checkIndicators();
-            checkPageIndex();
+            updatePageButtons();
+            updatePageIndicators();
+            updatePageDisplay();
         }
 
         function onNextPage() {
             if (hasNextPage()) {
-                $(options.Selectors.Gallery).trigger("page-changed", {
-                    PageIndex: options.PageIndex + 1
+                $(config.Selectors.Gallery).trigger("page-changed", {
+                    PageIndex: config.PageIndex + 1
                 });
             }
         }
@@ -151,30 +158,41 @@
             }
         }
 
+        function validate() {
+            if (!$(config.Selectors.Gallery).length) {
+                throw "Missing Selector: Gallery";
+            }
+
+            if (!$(config.Selectors.Indicators).length && (!$(config.Selectors.Previous) || !$(config.Selectors.Next))) {
+                throw "Missing Selector: Indicators or Previous/Next";
+            }
+        }
+
         function initialize() {
-            $(options.Selectors.Gallery).on("page-changed", onPageChanged);
-            $(options.Selectors.Next).on("click", onNextPage);
-            $(options.Selectors.Previous).on("click", onPreviousPage);
+            validate();
 
-            rankElements();
-            makeElementsClassy();
-            refreshItemCount();
+            $(config.Selectors.Gallery).on("page-changed", onPageChanged);
+            $(config.Selectors.Next).on("click", onNextPage);
+            $(config.Selectors.Previous).on("click", onPreviousPage);
 
-            if (!options.MaintainScrollPosition) {
+            enhanceElements();
+            updateItemCount();
+
+            if (!config.MaintainScrollPosition) {
                 $(document).ready(function () {
-                    $(options.Selectors.Gallery).scrollLeft(0);
+                    $(config.Selectors.Gallery).scrollLeft(0);
                 });
             } else {
                 $(document).ready(function () {
-                    $(options.Selectors.Gallery).scrollLeft(getScrollPosition());
+                    $(config.Selectors.Gallery).scrollLeft(getScrollPosition());
                 });
             }
-            checkButtons();
-            if ($(options.Selectors.Indicators).length) {
-                createIndicators();
-                checkIndicators();
+            updatePageButtons();
+            if ($(config.Selectors.Indicators).length) {
+                createPageIndicators();
+                updatePageIndicators();
             }
-            checkPageIndex();
+            updatePageDisplay();
         }
 
         initialize();
