@@ -43,6 +43,18 @@
 
         var config = $.extend(defaults, options, statics);
 
+        function hasNextPage() {
+            return (config.PageIndex + 1) * config.PageSize < config.ItemCount;
+        }
+
+        function hasPreviousPage() {
+            return config.PageIndex > 0;
+        }
+
+        function getTotalPages() {
+            return Math.ceil(config.ItemCount / config.PageSize);
+        }
+
         function enhanceElements() {
             $(config.Selectors.Gallery).addClass(config.Classes.Gallery);
 
@@ -66,7 +78,8 @@
                 $ul.attr(config.Attributes.Rounded, "true");
             }
 
-            for (var i = 0; i < getTotalPages() ; i++) {
+            var totalPages = getTotalPages();
+            for (var i = 0; i < totalPages ; i++) {
                 var $li = $("<li></li>");
                 $li.attr(config.Attributes.PageNumber, i + 1);
 
@@ -105,15 +118,6 @@
             config.ItemCount = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "]").length;
         }
 
-        function hasNextPage() {
-            return (config.PageIndex + 1) * config.PageSize < config.ItemCount;
-        }
-
-        function hasPreviousPage() {
-            return config.PageIndex > 0;
-        }
-
-
         function getScrollPosition() {
             var $scrollElement = $(config.Selectors.Gallery).find("[" + config.Attributes.Rank + "='" + [config.PageIndex * config.PageSize] + "']");
 
@@ -128,10 +132,6 @@
 
         function scrollTo() {
             $(config.Selectors.Gallery).stop().animate({ scrollLeft: getScrollPosition() }, config.Speed, config.Easing);
-        }
-
-        function getTotalPages() {
-            return Math.ceil(config.ItemCount / config.PageSize);
         }
 
         function onPageChanged(event, data) {
