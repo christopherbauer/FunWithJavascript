@@ -25,19 +25,27 @@
             }
         };
 
-        var config = $.extend(defaults, options);
+        var statics = {
+            Classes: {
+                Gallery: "scroll-gallery",
+                GalleryElement: "scroll-gallery-element",
+                WideTouchable: "widen"
+    }
+        };
+
+        var config = $.extend(defaults, options, statics);
 
         var Prefix = "data-" + config.Prefix;
 
         var itemCount;
 
         function enhanceElements() {
-            $(config.Selectors.Gallery).addClass("scroll-gallery");
+            $(config.Selectors.Gallery).addClass(config.Classes.Gallery);
 
             var $elements = $(config.Selectors.Gallery).find("> *");
             $elements.each(function (i, element) {
                 $(element).attr(Prefix + "-rank", i);
-                $(element).addClass("scroll-gallery-element");
+                $(element).addClass(config.Classes.GalleryElement);
             });
         }
 
@@ -45,7 +53,7 @@
             var $container = $(config.Selectors.Indicators);
 
             if (config.IndicatorOptions.IncreaseTouchSurface) {
-                $container.addClass("widen");
+                $container.addClass(config.Classes.WideTouchable);
             }
 
             var $ul = $("<ul></ul>");
