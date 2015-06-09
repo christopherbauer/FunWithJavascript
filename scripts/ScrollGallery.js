@@ -25,16 +25,16 @@
             }
         };
 
-        options = $.extend(defaults, options);
+        var config = $.extend(defaults, options);
 
-        var Prefix = "data-" + options.Prefix;
+        var Prefix = "data-" + config.Prefix;
 
         var itemCount;
 
         function enhanceElements() {
-            $(options.Selectors.Gallery).addClass("scroll-gallery");
+            $(config.Selectors.Gallery).addClass("scroll-gallery");
 
-            var $elements = $(options.Selectors.Gallery).find("> *");
+            var $elements = $(config.Selectors.Gallery).find("> *");
             $elements.each(function (i, element) {
                 $(element).attr(Prefix + "-rank", i);
                 $(element).addClass("scroll-gallery-element");
@@ -42,15 +42,15 @@
         }
 
         function createPageIndicators() {
-            var $container = $(options.Selectors.Indicators);
+            var $container = $(config.Selectors.Indicators);
 
-            if (options.IndicatorOptions.IncreaseTouchSurface) {
+            if (config.IndicatorOptions.IncreaseTouchSurface) {
                 $container.addClass("widen");
             }
 
             var $ul = $("<ul></ul>");
 
-            if (options.IndicatorOptions.Rounded) {
+            if (config.IndicatorOptions.Rounded) {
                 $ul.attr("data-rounded", "true");
             }
 
@@ -59,7 +59,7 @@
                 $li.attr("data-page-number", i + 1);
 
                 var $button = $("<button />");
-                $button.val(options.IndicatorOptions.ShowPageNumber ? (i + 1) : "");
+                $button.val(config.IndicatorOptions.ShowPageNumber ? (i + 1) : "");
                 $li.append($button);
 
                 $ul.append($li);
@@ -67,51 +67,51 @@
 
             $container.append($ul);
 
-            $(options.Selectors.Indicators).find("[data-page-number]").on("click", function () {
-                $(options.Selectors.Gallery).trigger("page-changed", {
+            $(config.Selectors.Indicators).find("[data-page-number]").on("click", function () {
+                $(config.Selectors.Gallery).trigger("page-changed", {
                     PageIndex: parseInt($(this).data("page-number")) - 1
                 });
             });
         }
 
         function updatePageButtons() {
-            $(options.Selectors.Next).prop("disabled", !hasNextPage());
-            $(options.Selectors.Previous).prop("disabled", !hasPreviousPage());
+            $(config.Selectors.Next).prop("disabled", !hasNextPage());
+            $(config.Selectors.Previous).prop("disabled", !hasPreviousPage());
         }
 
         function updatePageIndicators() {
-            $(options.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
-            $(options.Selectors.Indicators).find("[data-page-number=" + (options.PageIndex + 1) + "]").attr("current-page", '');
+            $(config.Selectors.Indicators).find("[data-page-number]").removeAttr("current-page");
+            $(config.Selectors.Indicators).find("[data-page-number=" + (config.PageIndex + 1) + "]").attr("current-page", '');
         }
 
         function updatePageDisplay() {
-            if ($(options.Selectors.PageCurrent).length) {
-                $(options.Selectors.PageCurrent).text(options.PageIndex + 1);
+            if ($(config.Selectors.PageCurrent).length) {
+                $(config.Selectors.PageCurrent).text(config.PageIndex + 1);
             }
-            if ($(options.Selectors.PageTotal).length) {
-                $(options.Selectors.PageTotal).text(getTotalPages());
+            if ($(config.Selectors.PageTotal).length) {
+                $(config.Selectors.PageTotal).text(getTotalPages());
             }
         }
 
         function updateItemCount() {
-            itemCount = $(options.Selectors.Gallery).find("[" + Prefix + "-rank]").length;
+            itemCount = $(config.Selectors.Gallery).find("[" + Prefix + "-rank]").length;
         }
 
         function hasNextPage() {
-            return (options.PageIndex + 1) * options.PageSize < itemCount;
+            return (config.PageIndex + 1) * config.PageSize < itemCount;
         }
 
         function hasPreviousPage() {
-            return options.PageIndex > 0;
+            return config.PageIndex > 0;
         }
 
 
         function getScrollPosition() {
-            var $scrollElement = $(options.Selectors.Gallery).find("[" + Prefix + "-rank='" + [options.PageIndex * options.PageSize] + "']");
+            var $scrollElement = $(config.Selectors.Gallery).find("[" + Prefix + "-rank='" + [config.PageIndex * config.PageSize] + "']");
 
             var layout = ($scrollElement.outerWidth(true) - $scrollElement.innerWidth()) / 2;
 
-            var pageAdjustment = options.PageIndex > 0 ? layout : 0;
+            var pageAdjustment = config.PageIndex > 0 ? layout : 0;
 
             var $parent = $scrollElement.parent();
 
@@ -119,15 +119,15 @@
         }
 
         function scrollTo() {
-            $(options.Selectors.Gallery).stop().animate({ scrollLeft: getScrollPosition() }, options.Speed, options.Easing);
+            $(config.Selectors.Gallery).stop().animate({ scrollLeft: getScrollPosition() }, config.Speed, config.Easing);
         }
 
         function getTotalPages() {
-            return Math.ceil(itemCount / options.PageSize);
+            return Math.ceil(itemCount / config.PageSize);
         }
 
         function onPageChanged(event, data) {
-            options.PageIndex = data.PageIndex;
+            config.PageIndex = data.PageIndex;
             scrollTo();
             updatePageButtons();
             updatePageIndicators();
@@ -136,8 +136,8 @@
 
         function onNextPage() {
             if (hasNextPage()) {
-                $(options.Selectors.Gallery).trigger("page-changed", {
-                    PageIndex: options.PageIndex + 1
+                $(config.Selectors.Gallery).trigger("page-changed", {
+                    PageIndex: config.PageIndex + 1
                 });
             }
         }
@@ -151,24 +151,24 @@
         }
 
         function initialize() {
-            $(options.Selectors.Gallery).on("page-changed", onPageChanged);
-            $(options.Selectors.Next).on("click", onNextPage);
-            $(options.Selectors.Previous).on("click", onPreviousPage);
+            $(config.Selectors.Gallery).on("page-changed", onPageChanged);
+            $(config.Selectors.Next).on("click", onNextPage);
+            $(config.Selectors.Previous).on("click", onPreviousPage);
 
             enhanceElements();
             updateItemCount();
 
-            if (!options.MaintainScrollPosition) {
+            if (!config.MaintainScrollPosition) {
                 $(document).ready(function () {
-                    $(options.Selectors.Gallery).scrollLeft(0);
+                    $(config.Selectors.Gallery).scrollLeft(0);
                 });
             } else {
                 $(document).ready(function () {
-                    $(options.Selectors.Gallery).scrollLeft(getScrollPosition());
+                    $(config.Selectors.Gallery).scrollLeft(getScrollPosition());
                 });
             }
             updatePageButtons();
-            if ($(options.Selectors.Indicators).length) {
+            if ($(config.Selectors.Indicators).length) {
                 createPageIndicators();
                 updatePageIndicators();
             }
