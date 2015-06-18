@@ -1,40 +1,11 @@
 <html>
 	<head>
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+		<script type="text/javascript" src="scripts/SwipeDetector.js"></script>
 		<script type="text/javascript">
-			var makeSwipeDetector = function(selector) {
-				var start;
-				
-				var clear = function () {
-					start = null;
-					$(selector).off("mousemove", mouseMove);
-				};
-
-				var mouseMove = function (data) {
-					if (!start) {
-						start = { x: data.pageX, y: data.pageY};
-					}
-					
-					var dx = data.pageX - start.x;
-					if (dx > 30) {
-						clear();
-						$(this).trigger("swipe-right");
-					} else if (dx < -30) {
-						clear();
-						$(this).trigger("swipe-left");
-					}
-				};
-
-				$(selector).on("mousedown", function(data) {
-					$(this).on("mousemove", mouseMove);
-				});
-				$(selector).on("mouseup", function(data) {
-					clear();
-				});
-			};
 			
 			$(document).ready(function() {
-				makeSwipeDetector("#swipeArea");
+				SwipeDetector("#swipeArea");
 				$("#swipeArea").on("swipe-left", function() {
 					$(this).html("Swipe Right to Left");
 				});
