@@ -172,8 +172,12 @@
             validate();
 
             $(config.Selectors.Gallery).on("page-changed", onPageChanged);
-            $(config.Selectors.Next).on("click", onNextPage);
+
+            $(config.Selectors.Gallery).on("page-next", onNextPage);
+            $(config.Selectors.Gallery).on("page-previous", onPreviousPage);
+
             $(config.Selectors.Previous).on("click", onPreviousPage);
+            $(config.Selectors.Next).on("click", onNextPage);
 
             enhanceElements();
             updateItemCount();
