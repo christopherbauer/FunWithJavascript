@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> 
+		<script type="text/javascript">
+			var makeSwipeDetector = function(selector) {
+				var start;
+				
+				var clear = function () {
+					start = null;
+					$(selector).off("mousemove", mouseMove);
+				};
+
+				var mouseMove = function (data) {
+					if (!start) {
+						start = { x: data.pageX, y: data.pageY};
+					}
+					
+					var dx = data.pageX - start.x;
+					if (dx > 30) {
+						clear();
+						$(this).trigger("swipe-right");
+					} else if (dx < -30) {
+						clear();
+						$(this).trigger("swipe-left");
+					}
+				};
+
+				$(selector).on("mousedown", function(data) {
+					$(this).on("mousemove", mouseMove);
+				});
+				$(selector).on("mouseup", function(data) {
+					clear();
+				});
+			};
+			
+			$(document).ready(function() {
+				makeSwipeDetector("#swipeArea");
+				$("#swipeArea").on("swipe-left", function() {
+					$(this).html("Swipe Right to Left");
+				});
+				$("#swipeArea").on("swipe-right", function() {
+					$(this).html("Swipe Left to Right");
+				});
+			});
+		</script>
+		<style type="text/css">
+			div {
+				margin-top: 10px;
+				width: 100%;
+				height: 500px;
+				border: solid 1px black;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="swipeArea">
+		
+		</div>
+		
+	</body>
+</html>
