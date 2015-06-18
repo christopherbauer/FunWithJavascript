@@ -1,33 +1,44 @@
 (function(){
 	"use strict";
 	
-	var SwipeDetector = function(selector) {
-		var start;
+	var defaults = {
+		Selector : null,
+		Threshold: 30
+	}
+	
+	var SwipeDetector = function(options) {
+		if (typeof options !== "object") {
+			options = {
+				Selector: options
+			};
+		}
+		
+		var config = $.extend(defaults,options, { Start: null });
 		
 		var clear = function () {
-			start = null;
-			$(selector).off("mousemove", mouseMove);
+			config.Start = null;
+			$(config.Selector).off("mousemove", mouseMove);
 		};
 
 		var mouseMove = function (data) {
-			if (!start) {
-				start = { x: data.pageX, y: data.pageY};
+			if (!config.Start) {
+				config.Start = data.pageX;
 			}
 			
-			var dx = data.pageX - start.x;
-			if (dx > 30) {
+			var dx = data.pageX - config.Start;
+			if (dx > config.Threshold) {
 				clear();
 				$(this).trigger("swipe-right");
-			} else if (dx < -30) {
+			} else if (dx < -config.Threshold) {
 				clear();
 				$(this).trigger("swipe-left");
 			}
 		};
 
-		$(selector).on("mousedown", function(data) {
+		$(config.Selector).on("mousedown", function(data) {
 			$(this).on("mousemove", mouseMove);
 		});
-		$(selector).on("mouseup", function(data) {
+		$(config.Selector).on("mouseup", function(data) {
 			clear();
 		});
 	};
