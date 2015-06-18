@@ -152,8 +152,8 @@
 
         function onPreviousPage() {
             if (hasPreviousPage()) {
-                $(options.Selectors.Gallery).trigger("page-changed", {
-                    PageIndex: options.PageIndex - 1
+                $(config.Selectors.Gallery).trigger("page-changed", {
+                    PageIndex: config.PageIndex - 1
                 });
             }
         }
